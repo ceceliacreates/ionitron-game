@@ -1,0 +1,7 @@
+{
+  "name": "phaser-vue-ionic-tabs",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
