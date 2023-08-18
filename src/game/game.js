@@ -1,4 +1,4 @@
-import { Scene, Game, AUTO, Scale} from "phaser";
+import { Scene, Game, AUTO, Scale, CANVAS} from "phaser";
 
 const gameState = {
 	score: 0,
@@ -30,11 +30,11 @@ class StartScene extends Scene {
     }
 
     preload() {
-        this.load.image("sky", "src/game/assets/sky.png");
-        this.load.image("ground", "src/game/assets/platform.png");
-        this.load.image("star", "src/game/assets/star.png");
-        this.load.image("bomb", "src/game/assets/bomb.png");
-        this.load.spritesheet("dude", "src/game/assets/dude.png", {
+        this.load.image("sky", "/assets/sky.png");
+        this.load.image("ground", "/assets/platform.png");
+        this.load.image("star", "/assets/star.png");
+        this.load.image("bomb", "/assets/bomb.png");
+        this.load.spritesheet("dude", "/assets/dude.png", {
           frameWidth: 32,
           frameHeight: 48,
         });
@@ -108,11 +108,11 @@ class PlayScene extends Scene {
     }
 
     preload() {
-        this.load.image("sky", "src/game/assets/sky.png");
-        this.load.image("ground", "src/game/assets/platform.png");
-        this.load.image("star", "src/game/assets/star.png");
-        this.load.image("bomb", "src/game/assets/bomb.png");
-        this.load.spritesheet("dude", "src/game/assets/dude.png", {
+        this.load.image("sky", "/game/assets/sky.png");
+        this.load.image("ground", "/game/assets/platform.png");
+        this.load.image("star", "/game/assets/star.png");
+        this.load.image("bomb", "/game/assets/bomb.png");
+        this.load.spritesheet("dude", "/game/assets/dude.png", {
           frameWidth: 32,
           frameHeight: 48,
         });
@@ -321,7 +321,7 @@ class PlayScene extends Scene {
         }
 
         // touch controls
-        
+
         else if (gameState.moveLeft && !gameState.moveRight) {
           gameState.player.setVelocityX(0 - playerVelocity);
       
@@ -353,7 +353,7 @@ class PlayScene extends Scene {
 
 export function launch() {
     return new Game({
-      type: AUTO,
+      type: CANVAS,
       scale: {
         mode: Scale.RESIZE,
         width: window.innerWidth,
