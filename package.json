@@ -20,6 +20,7 @@
     "@ionic/vue": "^7.0.0",
     "@ionic/vue-router": "^7.0.0",
     "ionicons": "^7.0.0",
+    "phaser": "^3.60.0",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
