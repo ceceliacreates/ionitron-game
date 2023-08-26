@@ -342,7 +342,7 @@ gameState.upArrow = this.add.image(gameWidth / 2, arrowHeight, 'upArrow').setInt
     // adds collider for bombs with player
     this.physics.add.overlap(gameState.player, bombs, function(player, bomb) {
 
-      // When the game ends, dispatch the event with the score
+      // When the game ends, dispatch the event with the score and current date
 const gameEndEvent = new CustomEvent("gameEnded", {
   detail: { score: gameState.score }
 });
@@ -358,13 +358,14 @@ window.dispatchEvent(gameEndEvent);
 		this.add.text(gameWidth / 2, gameHeight / 2, 'Game Over', { fontSize: '18px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
         this.add.text(gameWidth / 2, gameHeight / 2 + 25, 'Click to Restart', { fontSize: '18px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
 
-        // restarts game on click in game area
-			this.input.on('pointerdown', function (pointer) {
-        if (pointer.x >= pauseArea.x && pointer.x <= pauseArea.x + pauseArea.width &&
+        // restarts game on click
+			this.input.on('pointerup', (pointer) => {
+        if(pointer.x >= pauseArea.x && pointer.x <= pauseArea.x + pauseArea.width &&
           pointer.y >= pauseArea.y && pointer.y <= pauseArea.y + pauseArea.height) {
-				gameState.score = 0;
+            gameState.score = 0;
 				this.scene.restart();
         }
+	
 			});
 
     }, null, this);
