@@ -13,7 +13,6 @@ const gameScores = reactive<GameScore[]>([]);
 
 const addGameScore = (score: number) => {
   gameScores.push({score, date: new Date().toLocaleString()});
-  console.log(gameScores)
 }
 
 provide<GameScoresProvider>('gameScores', {

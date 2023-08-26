@@ -25,7 +25,6 @@ function handleClickStart() {
 function handleGameEnded(event: Event) {
   const customEvent = event as CustomEvent;
   addGameScore(customEvent.detail.score);
-  console.log(gameScores)
 }
 
 
