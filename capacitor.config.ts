@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'phaser-vue-ionic-tabs',
+  appName: 'Ionitron Game',
   webDir: 'dist',
   server: {
     androidScheme: 'https'

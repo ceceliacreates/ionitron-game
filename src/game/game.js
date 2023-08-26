@@ -342,6 +342,12 @@ gameState.upArrow = this.add.image(gameWidth / 2, arrowHeight, 'upArrow').setInt
     // adds collider for bombs with player
     this.physics.add.overlap(gameState.player, bombs, function(player, bomb) {
 
+      // When the game ends, dispatch the event with the score
+const gameEndEvent = new CustomEvent("gameEnded", {
+  detail: { score: gameState.score }
+});
+window.dispatchEvent(gameEndEvent);
+
       // stops game and displays game over text
         gameState.gameOver = true;
         createBombLoop.destroy();

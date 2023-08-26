@@ -6,12 +6,15 @@
       </ion-toolbar>
     </ion-header>
     <ion-content >
-      <PageContainer name="Scores" />
+      <pre>{{ gameScores }}</pre>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import PageContainer from '@/components/PageContainer.vue';
+import { inject } from 'vue'
+import { GameScoresProvider } from '@/types';
+
+const { gameScores } = inject<GameScoresProvider>('gameScores')!;
 </script>
