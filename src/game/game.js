@@ -1,4 +1,4 @@
-import { Scene, Game, AUTO, Scale, CANVAS} from "phaser";
+import { Scene, Game, AUTO, Scale} from "phaser";
 
 const gameState = {
 	score: 0,
@@ -13,6 +13,8 @@ const playerGravity = 300;
 const starGravity = 300;
 const bombGravity = 900;
 const playerVelocity = 200;
+const arrowSize = 80;
+const platformHeight = 32;
 
 function timeToFall(height, gravity) {
     var time = Math.sqrt((2 * height) / gravity);
@@ -42,12 +44,12 @@ class StartScene extends Scene {
   
     create() {
     // sets game values based on screen width and height
-    const gameHeight = this.scale.height;
-    const gameWidth = this.scale.width;
+    const screenHeight = this.scale.height;
+    const screenWidth = this.scale.width;
 
-    this.add.image(0, gameHeight / 2, "sky").setScale(2);
+    this.add.image(0, screenHeight / 2, "sky").setScale(2);
     
-   const startText = this.add.text(gameWidth / 2, gameHeight / 4, 'Click to Start', { fontSize: '22px', fill: 'yellow' }).setOrigin(0.5, 0.5);
+   const startText = this.add.text(screenWidth / 2, screenHeight / 4, 'Tap to Start', { fontSize: '22px', fill: 'yellow' }).setOrigin(0.5, 0.5);
 
    this.tweens.add({
     targets: startText,
@@ -59,17 +61,17 @@ class StartScene extends Scene {
     repeat: -1 // Repeat forever
   });
 
-    this.add.image(gameWidth / 2, gameHeight / 3, "dude")
-    this.add.text(gameWidth / 2, gameHeight / 3 + 50, 'Use arrow keys to move & jump', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
+    this.add.image(screenWidth / 2, screenHeight / 3, "dude")
+    this.add.text(screenWidth / 2, screenHeight / 3 + 50, 'Use arrow keys to move & jump', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
     
-    this.add.image(gameWidth / 2, gameHeight / 2, "star")
-    this.add.text(gameWidth / 2, gameHeight / 2 + 50, 'Catch stars to gain points', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
+    this.add.image(screenWidth / 2, screenHeight / 2, "star")
+    this.add.text(screenWidth / 2, screenHeight / 2 + 50, 'Catch stars to gain points', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
 
-    this.add.image(gameWidth / 2, gameHeight / 1.5, "bomb").setScale(2)
-    this.add.text(gameWidth / 2, gameHeight / 1.5 + 50, 'Avoid bombs or it\'s game over! ', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
+    this.add.image(screenWidth / 2, screenHeight / 1.5, "bomb").setScale(2)
+    this.add.text(screenWidth / 2, screenHeight / 1.5 + 50, 'Avoid bombs or it\'s game over! ', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
 
-    this.add.text(gameWidth / 2, gameHeight / 1.2, 'Click anywhere on the screen', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5)
-    this.add.text(gameWidth / 2, gameHeight / 1.2 + 15, 'to pause the game', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5)
+    this.add.text(screenWidth / 2, screenHeight / 1.2, 'Tap in the game area', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5)
+    this.add.text(screenWidth / 2, screenHeight / 1.2 + 15, 'to pause and resume', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5)
 
 
     // starts game on click
@@ -84,20 +86,28 @@ class PauseScene extends Scene {
     constructor(){
       super({ key: 'PauseScene'})
     }
+
+    init(data) {
+      this.pauseArea = data.pauseArea;
+  }
+
   
     create() {
     // sets game values based on screen width and height
-    const gameHeight = this.scale.height;
-    const gameWidth = this.scale.width;
+    const screenHeight = this.scale.height;
+    const screenWidth = this.scale.width;
     
-    this.add.text(gameWidth / 2, gameHeight / 2, 'Resume', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
+    this.add.text(screenWidth / 2, screenHeight / 2, 'Resume', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
 
-    // resumes game on click
-    this.input.once('pointerdown', function ()
+    // resumes game on click within game area
+
+    this.input.once('pointerdown', function (pointer)
     {
+      if (pointer.x >= this.pauseArea.x && pointer.x <= this.pauseArea.x + this.pauseArea.width &&
+        pointer.y >= this.pauseArea.y && pointer.y <= this.pauseArea.y + this.pauseArea.height) {
         this.scene.stop('PauseScene');
         this.scene.resume('PlayScene');
-
+        }
     }, this);
     }
   }
@@ -116,26 +126,16 @@ class PlayScene extends Scene {
           frameWidth: 32,
           frameHeight: 48,
         });
+        this.load.image("leftArrow", "/assets/leftarrow.png");
+        this.load.image("rightArrow", "/assets/rightarrow.png");
+        this.load.image("upArrow", "/assets/uparrow.png");
       }
   
     create () {
 
-    // pauses game on click
-    this.input.on('pointerdown', function ()
-    {
-        if (gameState.gameOver) {
-            return;
-        }
-        if (!gameState.canPause) {
-            return;
-        }
-        this.scene.pause();
-        this.scene.launch('PauseScene');
-    }, this);
-
     // sets game values based on screen width and height
     const screenHeight = this.scale.height;
-    const controlsHeight = screenHeight * 0.08;
+    const controlsHeight = screenHeight * 0.08 > platformHeight + arrowSize + 20 ? screenHeight * 0.08 : platformHeight + arrowSize + 20;
     const gameHeight = screenHeight - controlsHeight;
     const gameWidth = this.scale.width;
     const leftEdge = gameWidth * 0.1;
@@ -145,17 +145,47 @@ class PlayScene extends Scene {
     gameState.lastStarX = gameWidth / 2;
     gameState.gameOver = false;
 
+    // defines pause area
+    const pauseArea = {
+      x: 0,                     // Starting x-coordinate of the rectangle
+      y: 0,                     // Starting y-coordinate of the rectangle
+      width: gameWidth,         // Width of the rectangle
+      height: gameHeight        // Height of the rectangle
+  };
+
+    // pauses game on click
+
+    this.input.on('pointerdown', function (pointer)
+{
+    if (gameState.gameOver) {
+        return;
+    }
+    if (!gameState.canPause) {
+        return;
+    }
+    
+    // Check if the pointer is within the defined rectangular area
+    if (pointer.x >= pauseArea.x && pointer.x <= pauseArea.x + pauseArea.width &&
+        pointer.y >= pauseArea.y && pointer.y <= pauseArea.y + pauseArea.height) {
+        this.scene.pause();
+        this.scene.launch('PauseScene', { pauseArea: pauseArea });
+
+    }
+
+}, this);
+
+
     // sets background and static ground platform
 
     this.add.image(0, gameHeight / 2, "sky").setScale(2);
     const platforms = this.physics.add.staticGroup();
-    platforms.create(0, gameHeight - controlsHeight, "ground").setOrigin(0, 0).refreshBody();
+    platforms.create(0, gameHeight, "ground").setOrigin(0, 0).refreshBody();
 
     // sets player and player movement animation
 
     gameState.player = this.physics.add.sprite(
       gameWidth / 2,
-      gameHeight - controlsHeight - 24,
+      gameHeight - 24,
       "dude",
     );
     
@@ -190,14 +220,18 @@ class PlayScene extends Scene {
     gameState.cursors = this.input.keyboard.createCursorKeys();
 
     // adds score text
-    gameState.scoreText = this.add.text(gameWidth / 2, screenHeight - 16, 'Score: 0', { fontSize: '15px', fill: '#000000' }).setOrigin(0.5, 0);
+    const scoreTextFontSize = 15;
+    const halfScoreTextFontSize = scoreTextFontSize / 2;
+    gameState.scoreText = this.add.text(gameWidth / 2, gameHeight + halfScoreTextFontSize, 'Score: 0', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0);
 
     // adds arrow controls
-    const fontSize = 48;
+    const halfArrowSize = arrowSize / 2;
     const arrowOffset = gameWidth * 0.15;
-    gameState.leftArrow = this.add.text(arrowOffset, gameHeight - controlsHeight + fontSize, '⬅️', { fontSize: '48px', fill: '#000' }).setInteractive();
-    gameState.rightArrow = this.add.text(gameWidth - fontSize - arrowOffset, gameHeight - controlsHeight + fontSize, '➡️', { fontSize: '48px', fill: '#000' }).setInteractive();
-    gameState.upArrow = this.add.text(gameWidth / 2, gameHeight - controlsHeight + fontSize, '⬆️', { fontSize: '48px', fill: '#000' }).setInteractive().setOrigin(0.5, 0);
+    const arrowHeight = gameHeight + platformHeight + halfArrowSize + 10;
+    gameState.leftArrow = this.add.image(arrowOffset + halfArrowSize, arrowHeight, 'leftArrow').setInteractive();
+    gameState.rightArrow = this.add.image(gameWidth - halfArrowSize - arrowOffset, arrowHeight, 'rightArrow').setInteractive();
+    gameState.upArrow = this.add.image(gameWidth / 2, arrowHeight, 'upArrow').setInteractive().setOrigin(0.5, 0.5);
+
 
     gameState.leftArrow.on('pointerdown', () => {
       gameState.canPause = false;
@@ -353,7 +387,7 @@ class PlayScene extends Scene {
 
 export function launch() {
     return new Game({
-      type: CANVAS,
+      type: AUTO,
       scale: {
         mode: Scale.RESIZE,
         width: window.innerWidth,
