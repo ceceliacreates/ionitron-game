@@ -14,9 +14,12 @@ const starGravity = 300;
 const bombGravity = 900;
 const playerVelocity = 200;
 const arrowSize = 80;
-const platformHeight = 32;
 const playerHeight = 228;
 const playerWidth = 232;
+const spaceWidth = 800;
+const spaceHeight = 1021;
+const platformWidth = 800;
+const platformHeight = 64;
 
 function timeToFall(height, gravity) {
     var time = Math.sqrt((2 * height) / gravity);
@@ -34,10 +37,10 @@ class StartScene extends Scene {
     }
 
     preload() {
-        this.load.image("sky", "/assets/sky.png");
-        this.load.image("ground", "/assets/platform.png");
+        this.load.image("space", "/assets/space1.png");
+        this.load.image("ground", "/assets/spaceplatform.png");
         this.load.image("star", "/assets/star.png");
-        this.load.image("bomb", "/assets/bomb.png");
+        this.load.image("bomb", "/assets/laserRed08.png");
         this.load.spritesheet("ionitron", "/assets/ionitronsprite.png", {
           frameWidth: playerWidth,
           frameHeight: playerHeight,
@@ -48,10 +51,13 @@ class StartScene extends Scene {
     // sets game values based on screen width and height
     const screenHeight = this.scale.height;
     const screenWidth = this.scale.width;
+    const scale = screenHeight > screenWidth ? screenHeight / spaceHeight : screenWidth / spaceWidth;
 
-    this.add.image(0, screenHeight / 2, "sky").setScale(2);
+this.add.image(0, screenHeight, "space").setOrigin(0, 1).setScale(scale);
+
+
     
-   const startText = this.add.text(screenWidth / 2, screenHeight / 4, 'Tap to Start', { fontSize: '22px', fill: 'yellow' }).setOrigin(0.5, 0.5);
+   const startText = this.add.text(screenWidth / 2, screenHeight / 4, 'Tap to Start', { fontSize: '22px', fill: 'white' }).setOrigin(0.5, 0.5);
 
    this.tweens.add({
     targets: startText,
@@ -64,16 +70,16 @@ class StartScene extends Scene {
   });
 
     this.add.image(screenWidth / 2, screenHeight / 3, "ionitron").setScale(0.25)
-    this.add.text(screenWidth / 2, screenHeight / 3 + 50, 'Use arrow keys to move & jump', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
+    this.add.text(screenWidth / 2, screenHeight / 3 + 50, 'Use arrow keys to move & jump', { fontSize: '16px', fill: 'white' }).setOrigin(0.5, 0.5);
     
     this.add.image(screenWidth / 2, screenHeight / 2, "star")
-    this.add.text(screenWidth / 2, screenHeight / 2 + 50, 'Catch stars to gain points', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
+    this.add.text(screenWidth / 2, screenHeight / 2 + 50, 'Catch stars to gain points', { fontSize: '16px', fill: 'white' }).setOrigin(0.5, 0.5);
 
-    this.add.image(screenWidth / 2, screenHeight / 1.5, "bomb").setScale(2)
-    this.add.text(screenWidth / 2, screenHeight / 1.5 + 50, 'Avoid bombs or it\'s game over! ', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
+    this.add.image(screenWidth / 2, screenHeight / 1.5, "bomb")
+    this.add.text(screenWidth / 2, screenHeight / 1.5 + 50, 'Avoid lasers or it\'s game over! ', { fontSize: '16px', fill: 'white' }).setOrigin(0.5, 0.5);
 
-    this.add.text(screenWidth / 2, screenHeight / 1.2, 'Tap in the game area', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5)
-    this.add.text(screenWidth / 2, screenHeight / 1.2 + 15, 'to pause and resume', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5)
+    this.add.text(screenWidth / 2, screenHeight / 1.2, 'Tap in the game area', { fontSize: '16px', fill: 'white' }).setOrigin(0.5, 0.5)
+    this.add.text(screenWidth / 2, screenHeight / 1.2 + 15, 'to pause and resume', { fontSize: '16px', fill: 'white' }).setOrigin(0.5, 0.5)
 
 
     // starts game on click
@@ -120,10 +126,10 @@ class PlayScene extends Scene {
     }
 
     preload() {
-        this.load.image("sky", "/game/assets/sky.png");
-        this.load.image("ground", "/game/assets/platform.png");
+      this.load.image("space", "/assets/space1.png");
+        this.load.image("ground", "/game/assets/spaceplatform.png");
         this.load.image("star", "/game/assets/star.png");
-        this.load.image("bomb", "/game/assets/bomb.png");
+        this.load.image("bomb", "/game/assets/laserRed08.png");
         this.load.spritesheet("ionitron", "/assets/ionitronsprite.png", {
           frameWidth: playerWidth,
           frameHeight: playerHeight,
@@ -137,9 +143,12 @@ class PlayScene extends Scene {
 
     // sets game values based on screen width and height
     const screenHeight = this.scale.height;
-    const controlsHeight = screenHeight * 0.08 > platformHeight + arrowSize + 20 ? screenHeight * 0.08 : platformHeight + arrowSize + 20;
-    const gameHeight = screenHeight - controlsHeight;
     const gameWidth = this.scale.width;
+    const platformScale = gameWidth / platformWidth;
+    const adjustedPlatformHeight = platformHeight * platformScale;
+    const controlsHeight = screenHeight * 0.08 > adjustedPlatformHeight + arrowSize + 20 ? screenHeight * 0.08 : adjustedPlatformHeight + arrowSize + 20;
+    const gameHeight = screenHeight - controlsHeight;
+    const backgroundScale = gameHeight > gameWidth ? gameHeight / spaceHeight : gameWidth / spaceWidth;
     const leftEdge = gameWidth * 0.1;
     const rightEdge = gameWidth * 0.9;
     const starFallTime = timeToFall(gameHeight, starGravity);
@@ -179,9 +188,10 @@ class PlayScene extends Scene {
 
     // sets background and static ground platform
 
-    this.add.image(0, gameHeight / 2, "sky").setScale(2);
+this.add.image(0, gameHeight, "space").setOrigin(0, 1).setScale(backgroundScale);
+
     const platforms = this.physics.add.staticGroup();
-    platforms.create(0, gameHeight, "ground").setOrigin(0, 0).refreshBody();
+    platforms.create(0, gameHeight, "ground").setOrigin(0, 0).setScale(platformScale).refreshBody();
 
     // sets player and player movement animation
     const scaledPlayerHeight = playerHeight * 0.25;
@@ -230,7 +240,7 @@ class PlayScene extends Scene {
     const halfArrowSize = arrowSize / 2;
     const arrowOffset = gameWidth * 0.10;
     const hitAreaOffset = arrowOffset / 3;
-    const arrowHeight = gameHeight + platformHeight + halfArrowSize + 10;
+    const arrowHeight = gameHeight + adjustedPlatformHeight + halfArrowSize + 10;
 
     // defines hit area for left and right arrows
     const hitArea = new Phaser.Geom.Circle(halfArrowSize, halfArrowSize, halfArrowSize + hitAreaOffset); // last value is radius
@@ -313,7 +323,7 @@ gameState.upArrow = this.add.image(gameWidth / 2, arrowHeight, 'upArrow').setInt
         const randomXCoord = Math.random() * gameWidth;
         const xCoord = Phaser.Math.Clamp(randomXCoord, bombMinBoundary, bombMaxBoundary);
         const bomb = bombs.create(xCoord, 0, 'bomb')
-        bomb.setScale(2)
+    
     }
 
     const createBombLoop = this.time.addEvent({
@@ -339,8 +349,8 @@ gameState.upArrow = this.add.image(gameWidth / 2, arrowHeight, 'upArrow').setInt
         this.physics.pause();
 
 
-		this.add.text(gameWidth / 2, gameHeight / 2, 'Game Over', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
-        this.add.text(gameWidth / 2, gameHeight / 2 + 25, 'Click to Restart', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
+		this.add.text(gameWidth / 2, gameHeight / 2, 'Game Over', { fontSize: '18px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
+        this.add.text(gameWidth / 2, gameHeight / 2 + 25, 'Click to Restart', { fontSize: '18px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
 
         // restarts game on click
 			this.input.on('pointerup', () => {
@@ -409,6 +419,7 @@ export function launch() {
         height: window.innerHeight,
       },
       parent: "game",
+      backgroundColor: "#06163c",
       physics: {
         default: "arcade",
         arcade: {
