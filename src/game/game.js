@@ -15,6 +15,8 @@ const bombGravity = 900;
 const playerVelocity = 200;
 const arrowSize = 80;
 const platformHeight = 32;
+const playerHeight = 228;
+const playerWidth = 232;
 
 function timeToFall(height, gravity) {
     var time = Math.sqrt((2 * height) / gravity);
@@ -36,9 +38,9 @@ class StartScene extends Scene {
         this.load.image("ground", "/assets/platform.png");
         this.load.image("star", "/assets/star.png");
         this.load.image("bomb", "/assets/bomb.png");
-        this.load.spritesheet("dude", "/assets/dude.png", {
-          frameWidth: 32,
-          frameHeight: 48,
+        this.load.spritesheet("ionitron", "/assets/ionitronsprite.png", {
+          frameWidth: playerWidth,
+          frameHeight: playerHeight,
         });
       }
   
@@ -61,7 +63,7 @@ class StartScene extends Scene {
     repeat: -1 // Repeat forever
   });
 
-    this.add.image(screenWidth / 2, screenHeight / 3, "dude")
+    this.add.image(screenWidth / 2, screenHeight / 3, "ionitron").setScale(0.25)
     this.add.text(screenWidth / 2, screenHeight / 3 + 50, 'Use arrow keys to move & jump', { fontSize: '12px', fill: '#000000' }).setOrigin(0.5, 0.5);
     
     this.add.image(screenWidth / 2, screenHeight / 2, "star")
@@ -101,7 +103,7 @@ class PauseScene extends Scene {
 
     // resumes game on click within game area
 
-    this.input.once('pointerdown', function (pointer)
+    this.input.on('pointerdown', function (pointer)
     {
       if (pointer.x >= this.pauseArea.x && pointer.x <= this.pauseArea.x + this.pauseArea.width &&
         pointer.y >= this.pauseArea.y && pointer.y <= this.pauseArea.y + this.pauseArea.height) {
@@ -122,9 +124,9 @@ class PlayScene extends Scene {
         this.load.image("ground", "/game/assets/platform.png");
         this.load.image("star", "/game/assets/star.png");
         this.load.image("bomb", "/game/assets/bomb.png");
-        this.load.spritesheet("dude", "/game/assets/dude.png", {
-          frameWidth: 32,
-          frameHeight: 48,
+        this.load.spritesheet("ionitron", "/assets/ionitronsprite.png", {
+          frameWidth: playerWidth,
+          frameHeight: playerHeight,
         });
         this.load.image("leftArrow", "/assets/leftarrow.png");
         this.load.image("rightArrow", "/assets/rightarrow.png");
@@ -182,12 +184,13 @@ class PlayScene extends Scene {
     platforms.create(0, gameHeight, "ground").setOrigin(0, 0).refreshBody();
 
     // sets player and player movement animation
-
+    const scaledPlayerHeight = playerHeight * 0.25;
+    const halfScaledPlayerHeight = scaledPlayerHeight / 2;
     gameState.player = this.physics.add.sprite(
       gameWidth / 2,
-      gameHeight - 24,
-      "dude",
-    );
+      gameHeight - halfScaledPlayerHeight,
+      "ionitron",
+    ).setScale(0.25);
     
     gameState.player.body.setGravityY(playerGravity);
     gameState.player.setBounce(0.2);
@@ -195,20 +198,19 @@ class PlayScene extends Scene {
 
     this.anims.create({
       key: "left",
-      frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers("ionitron", { start: 0, end: 3 }),
       frameRate: 10,
       repeat: -1,
     });
 
     this.anims.create({
       key: "turn",
-      frames: [{ key: "dude", frame: 4 }],
-      frameRate: 20,
+      frames: [{ key: "ionitron", frame: 4 }],
     });
 
     this.anims.create({
       key: "right",
-      frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
+      frames: this.anims.generateFrameNumbers("ionitron", { start: 5, end: 8 }),
       frameRate: 10,
       repeat: -1,
     });
@@ -224,15 +226,21 @@ class PlayScene extends Scene {
     const halfScoreTextFontSize = scoreTextFontSize / 2;
     gameState.scoreText = this.add.text(gameWidth / 2, gameHeight + halfScoreTextFontSize, 'Score: 0', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0);
 
-    // adds arrow controls
+    // defines value for arrow images
     const halfArrowSize = arrowSize / 2;
-    const arrowOffset = gameWidth * 0.15;
+    const arrowOffset = gameWidth * 0.10;
+    const hitAreaOffset = arrowOffset / 3;
     const arrowHeight = gameHeight + platformHeight + halfArrowSize + 10;
-    gameState.leftArrow = this.add.image(arrowOffset + halfArrowSize, arrowHeight, 'leftArrow').setInteractive();
-    gameState.rightArrow = this.add.image(gameWidth - halfArrowSize - arrowOffset, arrowHeight, 'rightArrow').setInteractive();
-    gameState.upArrow = this.add.image(gameWidth / 2, arrowHeight, 'upArrow').setInteractive().setOrigin(0.5, 0.5);
 
+    // defines hit area for left and right arrows
+    const hitArea = new Phaser.Geom.Circle(halfArrowSize, halfArrowSize, halfArrowSize + hitAreaOffset); // last value is radius
 
+    // adds arrow images and hit areas
+gameState.leftArrow = this.add.image(arrowOffset + halfArrowSize, arrowHeight, 'leftArrow').setInteractive(hitArea, Phaser.Geom.Circle.Contains);
+gameState.rightArrow = this.add.image(gameWidth - halfArrowSize - arrowOffset, arrowHeight, 'rightArrow').setInteractive(hitArea, Phaser.Geom.Circle.Contains);
+gameState.upArrow = this.add.image(gameWidth / 2, arrowHeight, 'upArrow').setInteractive().setOrigin(0.5, 0.5);
+
+    // adds touch controls
     gameState.leftArrow.on('pointerdown', () => {
       gameState.canPause = false;
       gameState.moveLeft = true;
@@ -315,20 +323,26 @@ class PlayScene extends Scene {
         loop: true,
     });
 
+    // adds colliders for bombs with platform
     this.physics.add.collider(bombs, platforms, function(bomb) {
         bomb.destroy();
       }
     );
 
+    // adds collider for bombs with player
     this.physics.add.overlap(gameState.player, bombs, function(player, bomb) {
+
+      // stops game and displays game over text
         gameState.gameOver = true;
         createBombLoop.destroy();
         createStarLoop.destroy();
         this.physics.pause();
 
+
 		this.add.text(gameWidth / 2, gameHeight / 2, 'Game Over', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
         this.add.text(gameWidth / 2, gameHeight / 2 + 25, 'Click to Restart', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
 
+        // restarts game on click
 			this.input.on('pointerup', () => {
 				gameState.score = 0;
 				this.scene.restart();
