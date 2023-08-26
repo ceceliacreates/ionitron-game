@@ -359,7 +359,7 @@ window.dispatchEvent(gameEndEvent);
         this.add.text(gameWidth / 2, gameHeight / 2 + 25, 'Click to Restart', { fontSize: '18px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
 
         // restarts game on click in game area
-			this.input.on('pointerup', () => {
+			this.input.on('pointerdown', () => {
         if (pointer.x >= pauseArea.x && pointer.x <= pauseArea.x + pauseArea.width &&
           pointer.y >= pauseArea.y && pointer.y <= pauseArea.y + pauseArea.height) {
 				gameState.score = 0;
