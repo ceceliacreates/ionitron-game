@@ -11,8 +11,8 @@ import { GameScore, GameScoresProvider } from '@/types';
 
 const gameScores = reactive<GameScore[]>([]);
 
-const addGameScore = (score: number) => {
-  gameScores.push({score, date: new Date().toLocaleString()});
+const addGameScore = (score: number, rating: string) => {
+  gameScores.push({score, rating, date: new Date().toLocaleString()});
 }
 
 provide<GameScoresProvider>('gameScores', {

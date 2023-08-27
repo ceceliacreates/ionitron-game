@@ -257,11 +257,14 @@ export class PlayScene extends Scene {
 
   // adds collider for bombs with player
     this.physics.add.overlap(gameState.player, bombs, function(player, bomb) {
-      console.log(gameState.score)
+    
+    // calculates app store rating based on score
 
-    // When the game ends, dispatch the event with the score and current date
+    const appStoreRating = gameState.score >= 500 ? '⭐️⭐️⭐️⭐️⭐️' : gameState.score >= 400 ? '⭐️⭐️⭐️⭐️' : gameState.score >= 300 ? '⭐️⭐️⭐️' : gameState.score >= 200 ? '⭐️⭐️' : gameState.score >= 100 ? '⭐️' : 'Rejected 😭';
+
+    // When the game ends, dispatch the event with the score and rating
       const gameEndEvent = new CustomEvent("gameEnded", {
-        detail: { score: gameState.score }
+        detail: { score: gameState.score, rating: appStoreRating }
       });
     
       window.dispatchEvent(gameEndEvent);
@@ -275,7 +278,7 @@ export class PlayScene extends Scene {
       // stops Play Scene and starts Score Scene
 
       this.scene.stop('PlayScene')
-      this.scene.start('ScoreScene')
+      this.scene.start('ScoreScene', { appStoreRating: appStoreRating });
     }, null, this);
 }
   

@@ -32,7 +32,7 @@ function handleClickStart() {
 
 function handleGameEnded(event: Event) {
   const customEvent = event as CustomEvent;
-  addGameScore(customEvent.detail.score);
+  addGameScore(customEvent.detail.score, customEvent.detail.rating);
 }
 
 

@@ -8,8 +8,11 @@ export class ScoreScene extends Scene {
       super({ key: 'ScoreScene'})
     }
 
+    init(data) {
+        this.appStoreRating = data.appStoreRating;
+    }
+
     create() {
-        console.log(gameState)
     // adds background
     this.add.image(0, gameState.screen.height, gameConstants.background.key).setOrigin(0, 1).setScale(gameState.scaleValues.background);
 
@@ -28,13 +31,9 @@ export class ScoreScene extends Scene {
 
     gameState.finalScoreText = this.add.text(gameState.screen.width / 2, gameState.screen.height / 3, `Final Score: ${gameState.score}`, { fontSize: '22px', fill: '#000000' }).setOrigin(0.5, 0);
 
-    // calculates app store rating based on score
-
-    const appStoreRating = gameState.score >= 500 ? '⭐️⭐️⭐️⭐️⭐️' : gameState.score >= 400 ? '⭐️⭐️⭐️⭐️' : gameState.score >= 300 ? '⭐️⭐️⭐️' : gameState.score >= 200 ? '⭐️⭐️' : gameState.score >= 100 ? '⭐️' : 'Rejected 😭';
-
     // displays app store rating with animation
 
-    const appStoreRatingText = `App Store Rating: ${appStoreRating}`;
+    const appStoreRatingText = `App Store Rating: ${this.appStoreRating}`;
     const displayText = this.add.text(gameState.screen.width / 2, gameState.screen.height / 3 + 50, '', { fontSize: gameConstants.startFontSize, fill: '#000000', fontStyle: 'bold'}).setOrigin(0.5, 0.5);
 
     // selects random review based on score
