@@ -3,7 +3,18 @@ import { PlayScene } from './scenes/PlayScene.js';
 import { StartScene } from './scenes/StartScene.js';
 import { PauseScene } from './scenes/PauseScene.js';
 
-export function launch() {
+export function launch(includedScenes = []) {
+
+  const availableScenes = {
+    'StartScene': StartScene,
+    'PlayScene': PlayScene,
+    'PauseScene': PauseScene
+};
+
+  // default to all scenes if none are specified
+  
+  const scenes = !includedScenes ? [StartScene, PlayScene, PauseScene] : includedScenes.map(sceneName => availableScenes[sceneName]);
+
     return new Game({
       type: AUTO,
       scale: {
@@ -20,6 +31,6 @@ export function launch() {
           // debug: true
         },
       },
-      scene: [StartScene, PlayScene, PauseScene],
+      scene: scenes,
     });
   }

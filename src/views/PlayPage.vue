@@ -16,13 +16,3 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue
 import PhaserContainer from '@/components/PhaserContainer.vue';
 
 </script>
-
-<style scoped>
-#game {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-}
-</style>

@@ -9,6 +9,13 @@ export class PlayScene extends Scene {
     }
 
     preload() {
+        this.load.image(gameConstants.background.key, gameConstants.background.path);
+        this.load.image(gameConstants.star.key, gameConstants.star.path);
+        this.load.image(gameConstants.bomb.key, gameConstants.bomb.path);
+        this.load.spritesheet(gameConstants.player.key, gameConstants.player.path, {
+          frameWidth: gameConstants.player.width,
+          frameHeight: gameConstants.player.height,
+        });
         this.load.image(gameConstants.platform.key, gameConstants.platform.path);
         this.load.image(gameConstants.arrow.leftKey, gameConstants.arrow.leftPath);
         this.load.image(gameConstants.arrow.rightKey, gameConstants.arrow.rightPath);
