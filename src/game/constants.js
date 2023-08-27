@@ -15,15 +15,53 @@ const gameConstants = {
       path: "assets/ionitron.png",
       key: "player"
     },
-    star: {
+    rewards: {
       gravity: 300,
-      path: "assets/star.png",
-      key: "star"
+      starPath: "assets/emote_star.png",
+      starKey: "star",
+      starSize: 16,
+      starScale: 2,
+      heartPath: "assets/emote_heart.png",
+      heartSize: 16,
+      heartScale: 2,
+      heartKey: "heart"
     },
-    bomb: {
+    penalties: {
+      gravity: 300,
+      angryPath: "assets/emote_angry.png",
+      angryKey: "angry",
+      angrySize: 16,
+      angryScale: 2,
+      sadPath: "assets/emote_sad.png",
+      sadKey: "sad",
+      sadSize: 16,
+      sadScale: 2,
+    },
+    boosts: {
       gravity: 900,
-      path: "assets/laserRed08.png",
-      key: "bomb"
+      coffeePath: "assets/coffee.png",
+      coffeeKey: "coffee",
+      coffeeSize: 117,
+      coffeeScale: 0.4,
+      laptopPath: "assets/laptop.png",
+      laptopKey: "laptop",
+      laptopSize: 143,
+      laptopScale: 0.4,
+      phonePath: "assets/phone.png",
+      phoneKey: "phone",
+      phoneSize: 58,
+      phoneScale: .75,
+    },
+    bugs: {
+      gravity: 900,
+      bug1Path: "assets/bug1.png",
+      bug1Key: "bug1",
+      bug1Size: 50,
+      bug1Scale: 1,
+      bug2Path: "assets/bug2.png",
+      bug2Key: "bug2",
+      bug2Size: 50,
+      bug2Scale: 1,
     },
     arrow: {
       size: 80,

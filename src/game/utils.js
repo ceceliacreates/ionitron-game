@@ -27,5 +27,5 @@ export function wrapText(scene, text, maxWidth, fontSize) {
     });
 
     wrappedText += line;
-    return wrappedText;
+    return wrappedText.trim();
 }

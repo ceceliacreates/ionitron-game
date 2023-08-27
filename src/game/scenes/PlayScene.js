@@ -11,7 +11,8 @@ export class PlayScene extends Scene {
     preload() {
         this.load.image(gameConstants.background.key, gameConstants.background.path);
         this.load.image(gameConstants.star.key, gameConstants.star.path);
-        this.load.image(gameConstants.bomb.key, gameConstants.bomb.path);
+        this.load.image(gameConstants.bomb.key1, gameConstants.bomb.path1);
+        this.load.image(gameConstants.bomb.key2, gameConstants.bomb.path2);
         this.load.spritesheet(gameConstants.player.key, gameConstants.player.path, {
           frameWidth: gameConstants.player.width,
           frameHeight: gameConstants.player.height,
@@ -164,6 +165,10 @@ export class PlayScene extends Scene {
     const randomXCoord = Math.random() * gameState.gameArea.width;
     const xCoord = Phaser.Math.Clamp(randomXCoord, bombMinBoundary, bombMaxBoundary);
     const bomb = bombs.create(xCoord, 0, gameConstants.bomb.key)
+
+    // sets hit area for bomb to be smaller than actual bomb
+    const hitRadius = bomb.width * 0.6 / 2; 
+    bomb.setCircle(hitRadius, bomb.width * 0.2, bomb.height * 0.2); // the offset values should be half of the difference between the hit area and the actual bomb
   }
 
   const createBombLoop = this.time.addEvent({
