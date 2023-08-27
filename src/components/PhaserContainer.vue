@@ -24,7 +24,7 @@ function handleClickStart() {
   showLaunch.value = false;
 
   // only include StartScene if showRules is true
-  const includedScenes = showRules.value ? ['StartScene', 'PlayScene', 'PauseScene'] : ['PlayScene', 'PauseScene']
+  const includedScenes = showRules.value ? ['StartScene', 'PlayScene', 'PauseScene', 'ScoreScene'] : ['PlayScene', 'PauseScene', 'ScoreScene']
 
   // launch the game
   gameInstance = launch(includedScenes);

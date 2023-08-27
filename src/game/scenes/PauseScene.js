@@ -5,18 +5,10 @@ export class PauseScene extends Scene {
     constructor(){
       super({ key: 'PauseScene'})
     }
-
-    init(data) {
-      gameState.pauseArea = data.pauseArea;
-  }
-
   
     create() {
-    // sets game values based on screen width and height
-    const screenHeight = this.scale.height;
-    const screenWidth = this.scale.width;
     
-    this.add.text(screenWidth / 2, screenHeight / 2, 'Resume', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
+    this.add.text(gameState.gameArea.width / 2, gameState.gameArea.height / 2, 'Resume', { fontSize: '15px', fill: '#ffffff' }).setOrigin(0.5, 0.5);
 
     // resumes game on click/tap within game area
 

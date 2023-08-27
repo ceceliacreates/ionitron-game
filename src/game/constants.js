@@ -45,7 +45,44 @@ const gameConstants = {
       height: 64,
       path: "assets/officeplatform.png",
       key: "platform"
+    },
+    reviews: {
+      bad: [
+        'this app made me throw my phone in the river',
+        'using this app cost me my job and my family',
+        'this app is the worst thing that ever happened to me',
+        'my pet rock could design a better app',
+        'I would give zero stars if I could',
+        'I liked this app... until I used it',
+        'I think this app is the reason my hair is falling out',
+      ],
+      okay: [
+        'this app didn\'t kill me',
+        'this app is the sandwich of lunches',
+        'this app is better than a sharp stick in the eye',
+        'it exists, I guess',
+        'it\'s like toast without butter. Plain.',
+        'I didn\'t uninstall...yet',
+        'better than watching paint dry'
+      ],
+      good: [
+        'I finally moved out of my parents\' basement thanks to this app',
+        'thanks to this app, I don\'t dread Mondays...as much',
+        'not bad, not great, kinda like my ex',
+        'I\'m slightly more efficient now',
+        'like a decent cup of coffee on a sleepy morning',
+        'didn\'t blow my mind, but it did ruffle my hair a bit',
+        'it\'s the kind of app I\'d introduce to my friends, but maybe not my family'
+      ],
+      great: [
+        'this app is the best thing that ever happened to me',
+        'this app is like a chocolate chip in a sea of raisins',
+        'it\'s like finding extra fries at the bottom of the bag',
+        'life before this app? Can\'t even remember',
+        'I would marry this app if I could'
+      ]
     }
+    
   };
 
   export default gameConstants;

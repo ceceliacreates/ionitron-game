@@ -195,7 +195,7 @@ export class PlayScene extends Scene {
     if (pointer.x >= gameState.pauseArea.x && pointer.x <= gameState.pauseArea.x + gameState.pauseArea.width &&
         pointer.y >= gameState.pauseArea.y && pointer.y <= gameState.pauseArea.y + gameState.pauseArea.height) {
         this.scene.pause();
-        this.scene.launch('PauseScene', { pauseArea: gameState.pauseArea });
+        this.scene.launch('PauseScene');
 
     }
 }, this);
@@ -257,6 +257,7 @@ export class PlayScene extends Scene {
 
   // adds collider for bombs with player
     this.physics.add.overlap(gameState.player, bombs, function(player, bomb) {
+      console.log(gameState.score)
 
     // When the game ends, dispatch the event with the score and current date
       const gameEndEvent = new CustomEvent("gameEnded", {
@@ -270,23 +271,11 @@ export class PlayScene extends Scene {
       createBombLoop.destroy();
       createStarLoop.destroy();
       this.physics.pause();
-      
-    // displays game over text
-      this.add.text(gameState.gameArea.width / 2, gameState.gameArea.height / 2, 'Game Over', { fontSize: gameConstants.gameOverFontSize, fill: '#000000', backgroundColor: 'white' }).setOrigin(0.5, 0.5);
-        this.add.text(gameState.gameArea.width / 2, gameState.gameArea.height / 2 + 25, 'Tap to Restart', { fontSize: gameConstants.gameOverFontSize, fill: '#000000', backgroundColor: 'white' }).setOrigin(0.5, 0.5);
 
-    // restarts game on click/tap
-			this.input.on('pointerup', (pointer) => {
+      // stops Play Scene and starts Score Scene
 
-        // Only restarts if player clicks/taps within the game area
-        if(pointer.x >= gameState.pauseArea.x && pointer.x <= gameState.pauseArea.x + gameState.pauseArea.width &&
-          pointer.y >= gameState.pauseArea.y && pointer.y <= gameState.pauseArea.y + gameState.pauseArea.height) 
-          {
-            // resets score and restarts scene
-            gameState.score = 0;
-				    this.scene.restart();
-        }
-		});
+      this.scene.stop('PlayScene')
+      this.scene.start('ScoreScene')
     }, null, this);
 }
   
