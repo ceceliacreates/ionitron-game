@@ -96,7 +96,7 @@ gameInstance = launch(includedScenes);
 
 User game score history is stored to local storage on device (Capacitor Preferences API) or browser (Local Storage API). This ensures saves scores are persistent across browser refresh or app closure.
 
-- Uses Capacitor's `isNativePlatform()` method to determine which storage method to use.
+- Uses [Capacitor's `isNativePlatform()` method](https://capacitorjs.com/docs/core-apis/web#isnativeplatform) to determine which storage method to use.
 - **Note:** [Capacitor Preferences API](https://capacitorjs.com/docs/apis/preferences) is only meant for light storage of key/value pairs. For large amounts of score data, use a database.
 - Sort scores based on highest, lowest, and latest
 - Clear list of scores from storage with button click
