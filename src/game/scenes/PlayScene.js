@@ -64,8 +64,14 @@ export class PlayScene extends Scene {
     gameState.lastRewardX = gameState.gameArea.width / 2;
 
 
-    // resets gameOver to false to handle game restarts
+    // resets gameState to false to handle game restarts
     gameState.gameOver = false;
+    gameState.score = 0;
+    gameState.immune = false;
+    gameState.canPause = true;
+    gameState.moveLeft = false;
+    gameState.moveRight = false;
+    gameState.moveUp = false;
 
     // creates cursor keys
     gameState.cursors = this.input.keyboard.createCursorKeys();
@@ -354,7 +360,7 @@ export class PlayScene extends Scene {
     this.physics.add.overlap(gameState.player, penalties, function(player, penalty) {
         penalty.destroy();
         // checks for immunity before updating score
-        if (!gameState.immunity) {
+        if (!gameState.immune) {
         gameState.score = gameState.score > 10 ? gameState.score - 10 : 0;
         gameState.scoreText.setText(`Score: ${gameState.score}`);
         };
@@ -368,13 +374,13 @@ export class PlayScene extends Scene {
 
     this.physics.add.overlap(gameState.player, boosts, function(player, boost) {
         boost.destroy();
-        gameState.immunity = true;
+        gameState.immune = true;
         gameState.player.setTint(0x00ff00);
 
         gameState.immunityTimer = this.time.addEvent({
           delay: 5000,
           callback: () => {
-            gameState.immunity = false;
+            gameState.immune = false;
             gameState.player.clearTint();
           },
           callbackScope: this,
@@ -394,7 +400,7 @@ export class PlayScene extends Scene {
 
     // checks for immunity before ending game
 
-    if (!gameState.immunity) {
+    if (!gameState.immune) {
     
     // calculates app store rating based on score
 
