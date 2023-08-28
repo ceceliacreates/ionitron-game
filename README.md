@@ -28,6 +28,11 @@ New test devices and a hot pot of coffee will prevent bugs and bad reviews, but 
 
 Good luck!
 
+<video width="320" height="240" controls>
+  <source src="https://github.com/ceceliacreates/ionitron-game/blob/a0e56fa5eadf1efd6d3eff07ce10660efc9d4443/IonitronDemo.mov" type="video/mp4">
+</video>
+
+
 
 ## About
 
