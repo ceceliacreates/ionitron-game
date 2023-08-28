@@ -28,9 +28,11 @@ New test devices and a hot pot of coffee will prevent bugs and bad reviews, but 
 
 Good luck!
 
-<video width="360" height="778" controls>
-  <source src="https://drive.google.com/file/d/1Yc_ttKuwXxKVu85Mhw1XXx0UY3mxTRXy/preview" type="video/mp4">
-</video>
+
+
+https://github.com/ceceliacreates/ionitron-game/assets/40367173/b7989a15-0c78-4e37-adfc-837692f556ba
+
+
 
 ## About
 
