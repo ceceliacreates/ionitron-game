@@ -1,5 +1,8 @@
 # Ionitron: The Game
 
+> ⚠️ **Note**: Not yet tested on Android, let me know if there are any issues!
+
+
 * [Gameplay](#gameplay)
 * [About](#about)
   + [Overview](#overview)
