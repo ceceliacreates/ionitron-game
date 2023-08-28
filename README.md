@@ -1,5 +1,8 @@
 # Ionitron: The Game
 
+> ⚠️ **Note**: Not yet tested on Android, let me know if there are any issues!
+
+
 * [Gameplay](#gameplay)
 * [About](#about)
   + [Overview](#overview)
@@ -20,6 +23,9 @@
 
 
 ## Gameplay
+
+<img src="screenshots/screenshotstartscene.png" width="200"> <img src="screenshots/screenshotgameplay.png" width="200"> <img src="screenshots/screenshotscorescene.png" width="200"> <img src="screenshots/screenshortscoreslist.png" width="200">
+
 In this game, you are Ionitron, a hard-working cross-platform developer! You use your web skills to build mobile apps for iOS and Android using Ionic and Capacitor.
 
 The success of your apps depend on creating a great user experience. Your score increases when your users are happy, but unhappy users can tank your rating. Whatever you do, avoid the bugs!
@@ -27,11 +33,6 @@ The success of your apps depend on creating a great user experience. Your score 
 New test devices and a hot pot of coffee will prevent bugs and bad reviews, but they don't last forever.
 
 Good luck!
-
-
-
-https://github.com/ceceliacreates/ionitron-game/assets/40367173/b7989a15-0c78-4e37-adfc-837692f556ba
-
 
 
 ## About
@@ -135,7 +136,7 @@ gameInstance = launch(includedScenes);
 User game score history is stored to local storage on device (Capacitor Preferences API) or browser (Local Storage API). This ensures saves scores are persistent across browser refresh or app closure.
 
 - Uses [Capacitor's `isNativePlatform()` method](https://capacitorjs.com/docs/core-apis/web#isnativeplatform) to determine which storage method to use.
-- **Note:** [Capacitor Preferences API](https://capacitorjs.com/docs/apis/preferences) is only meant for light storage of key/value pairs. For large amounts of score data, use a database.
+- **Note:** [Capacitor Preferences API](https://capacitorjs.com/docs/apis/preferences) is only meant for light storage of key/value pairs. Because of this, we are only storing 10 scores at a time, and removing the 'rating' property because this can be calculated. To save more data, use an [actual storage solution or database](https://capacitorjs.com/docs/guides/storage).
 - Clear list of scores from storage with button click on Scores page
 
 Score storage is handled with four functions, `loadGameScores()`, `addGameScore()`, `saveGameScores()`, and `clearGameScores()`. These are all defined in the `App.vue` component.
@@ -161,15 +162,13 @@ const loadGameScores = async () => {
         scoresString = localStorage.getItem('gameScores') || '';
     }
 
-    if (scoresString) {
-        const parsedScores = JSON.parse(scoresString);
+    // logic that adds back in rating property here
+
         gameScores.splice(0, gameScores.length, ...parsedScores);
-    }
 };
 
-const saveGameScores = async () => {
-
-  const scoresString = JSON.stringify(gameScores);
+const saveGameScores = async (minimizedGameScores: Omit<GameScore, 'rating'>[]) => {
+  const scoresString = JSON.stringify(minimizedGameScores);
 
   if (Capacitor.isNativePlatform()) {
     await Preferences.set({
@@ -182,16 +181,23 @@ const saveGameScores = async () => {
 }
 
 const addGameScore = (score: number, rating: string) => {
-
+    if (gameScores.length >= 10) {
+        gameScores.shift();
+    }
     gameScores.push({score, rating, date: new Date().toLocaleString()});
-    saveGameScores();
+
+    const minimizedGameScores = gameScores.map(({score, date}) => ({score, date}));
+
+    saveGameScores(minimizedGameScores);
 }
 
-loadGameScores();
+  loadGameScores();
 
 const clearGameScores = async () => {
+
     gameScores.splice(0, gameScores.length);
-    saveGameScores();
+
+    saveGameScores([]);
 }
 
 provide<GameScoresProvider>('gameScores', {

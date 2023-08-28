@@ -8,5 +8,4 @@ export type GameScore = {
       gameScores: GameScore[];
       addGameScore: (score: number, rating: string) => void;
       clearGameScores: () => void;
-  
     }
