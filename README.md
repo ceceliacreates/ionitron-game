@@ -20,6 +20,12 @@
 
 
 ## Gameplay
+
+<img src="screenshots/screenshotstartscene.png" width="200">
+<img src="screenshots/screenshotgameplay.png" width="200">
+<img src="screenshots/screenshotscorescene.png" width="200">
+<img src="screenshots/screenshortscoreslist.png" width="200">
+
 In this game, you are Ionitron, a hard-working cross-platform developer! You use your web skills to build mobile apps for iOS and Android using Ionic and Capacitor.
 
 The success of your apps depend on creating a great user experience. Your score increases when your users are happy, but unhappy users can tank your rating. Whatever you do, avoid the bugs!
