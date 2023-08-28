@@ -1,5 +1,24 @@
 # Ionitron: The Game
 
+* [Gameplay](#gameplay)
+* [About](#about)
+  + [Overview](#overview)
+  + [Tech Stack Concepts Demonstrated](#tech-stack-concepts-demonstrated)
+    - [Phaser](#phaser)
+    - [Ionic](#ionic)
+    - [Capacitor](#capacitor)
+    - [Vue](#vue)
+  + [App Features](#app-features)
+    - [Responsive Layout](#responsive-layout)
+    - [Selective Scene Inclusion](#selective-scene-inclusion)
+    - [Local Storage of Game Scores](#local-storage-of-game-scores)
+    - [Data transfer between Phaser & Vue](#data-transfer-between-phaser--vue)
+    - [Sorting Scores](#sorting-scores)
+* [Running the Game](#running-the-game)
+  + [In a Browser](#in-a-browser)
+  + [On a Mobile Device](#on-a-mobile-device)
+
+
 ## Gameplay
 In this game, you are Ionitron, a hard-working cross-platform developer! You use your web skills to build mobile apps for iOS and Android using Ionic and Capacitor.
 
@@ -11,6 +30,8 @@ Good luck!
 
 
 ## About
+
+### Overview
 
 Built with Phaser, Ionic, Capacitor, and Vue, using Vite.
 
@@ -78,7 +99,10 @@ App and game are responsive for all screen sizes, but mobile view is recommended
 
 - Uses Ionic components for tabbed layout, buttons, lists, icons, and selects
 - Ionic Vue app is responsive using Flexbox
-- Phaser game is responsive using dynamic scaling based on screen size. This could likely be further optimized with more math.
+- Phaser game is responsive using the `Phaser.Scale.RESIZE` mode. This means that the game will resize to fit the parent container, potentially altering the aspect ratio.
+  - Because I am using `RESIZE`, my Phaser game dynamically scales game objects based on the screen size. This may not be the best option for some games.
+  - An alternative is to use `Phaser.Scale.FIT`, which will always ensure the game has the same aspect ratio and fits inside the parent container. This may result in black bars around the game to fill out the screen.
+- The scale configuration takes into account the `devicePixelRatio` to ensure quality rendering on high-DPI (Retina) displays.
 
 #### Selective Scene Inclusion
 
@@ -173,7 +197,7 @@ provide<GameScoresProvider>('gameScores', {
 </script>
 ```
 
-#### Data transfer between Phaser & Vue
+#### Data Transfer Between Phaser & Vue
 
 Scores are emitted from the Phaser game instance to the parent Vue app using a custom event that includes the game score and a calculated "App Store Rating" based on the score.
 
@@ -261,3 +285,37 @@ The `sortedScores` are then passed to a `v-for` attribute in a `<ion-item>` comp
   </ion-item>
 </ion-list>
 ```
+## Running the Game
+
+### In a Browser
+
+- Fork and clone the repo
+- Run `npm install`
+- Run `ionic serve` if you have the Ionic CLI installed, otherwise run `npm run dev` to start a Vite server and launch the game in a browser
+- Use your browser DevTools to view in a mobile viewport
+- Use keyboard arrow keys (recommended) or on-screen controls to play
+
+## On a Mobile Device
+
+To run this game on a mobile device, you will need to have an environment setup for building to iOS and/or Android with Capacitor.
+
+Check out the [Capacitor Environment Setup docs here](https://capacitorjs.com/docs/getting-started/environment-setup).
+
+Once your environment is set up:
+
+- Fork and clone the repo.
+- Run `npm install`
+
+The following steps can be done via the terminal or with the Ionic VS Code Extension (recommended).
+
+- Create a production web build with `npm run build`
+- Sync the web build to the native projects with `npx cap sync`
+- Open the project in Xcode or Android Studio
+
+Once you are in Xcode or Android Studio:
+
+- Connect your mobile device (must be configured for development)
+- Select your mobile device as the target and run the app
+- The app will be installed on your device and you can play!
+
+You can also run on an emulator/simulator device, although the on-screen controls will be difficult to use without touch functionality.

@@ -21,9 +21,9 @@ export function launch(includedScenes = []) {
       type: AUTO,
       scale: {
         mode: Scale.RESIZE,
-        width: window.innerWidth,
+        width: window.innerWidth * window.devicePixelRatio,
         autoCenter: Scale.CENTER_BOTH,
-        height: window.innerHeight,
+        height: window.innerHeight * window.devicePixelRatio,
       },
       parent: "game",
       backgroundColor: "#201726",
