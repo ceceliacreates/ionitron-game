@@ -12,7 +12,7 @@ Good luck!
 
 ## About
 
-Built with Phaser, Ionic, Capacitor, and Vue.
+Built with Phaser, Ionic, Capacitor, and Vue, using Vite.
 
 https://phaser.io/
 https://ionicframework.com/
@@ -21,13 +21,22 @@ https://v3.vuejs.org
 
 This is an Ionic Vue app that launches a Phaser game instance within the `PhaserContainer` component.
 
-Capacitor is used for storage and to compile for iOS and Android.
+This app was created specifically to demonstrate how to build with Phaser and Ionic Vue using Vite and TypeScript. I couldn't find any examples of this specific tech stack combination so hopefully it's helpful for others that want to build mobile games with web technologies!
+
+Thanks to the following resources that helped me along the way:
+- https://www.youtube.com/@OpenForge/videos
+- https://github.com/Sun0fABeach/vue-phaser3
+- https://github.com/openforge/ionic-phaser-game-template
+- https://www.codecademy.com/courses/learn-phaser
+- https://phaser.io/tutorials/making-your-first-phaser-3-game/part1
+- ChatGPT & GitHub Copilot 🙏
 
 ### Tech Stack Concepts Demonstrated
 
 #### Phaser
 - Game instance launch
 - Changing between scenes
+- Pausing a scene
 - Selective scene inclusion
 - Adding images, text, and sprites
 - Scaling game objects and physics values based on screen size
@@ -98,8 +107,7 @@ User game score history is stored to local storage on device (Capacitor Preferen
 
 - Uses [Capacitor's `isNativePlatform()` method](https://capacitorjs.com/docs/core-apis/web#isnativeplatform) to determine which storage method to use.
 - **Note:** [Capacitor Preferences API](https://capacitorjs.com/docs/apis/preferences) is only meant for light storage of key/value pairs. For large amounts of score data, use a database.
-- Sort scores based on highest, lowest, and latest
-- Clear list of scores from storage with button click
+- Clear list of scores from storage with button click on Scores page
 
 Score storage is handled with four functions, `loadGameScores()`, `addGameScore()`, `saveGameScores()`, and `clearGameScores()`. These are all defined in the `App.vue` component.
 
