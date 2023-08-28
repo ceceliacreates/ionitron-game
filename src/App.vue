@@ -40,8 +40,6 @@ const loadGameScores = async () => {
         }
 
         gameScores.splice(0, gameScores.length, ...parsedScores);
-
-        console.log(gameScores)
     }
 };
 
@@ -87,8 +85,9 @@ const addGameScore = (score: number, rating: string) => {
 const clearGameScores = async () => {
     gameScores.splice(0, gameScores.length);
 
-    // saves an empty array to local storage
-    saveGameScores([]);
+    // clears all preferences stored
+    await Preferences.clear();
+    
 }
 
 provide<GameScoresProvider>('gameScores', {
