@@ -13,6 +13,10 @@
         <ion-select-option value="lowest">Lowest Score</ion-select-option>
         <ion-select-option value="latest">Latest</ion-select-option>
       </ion-select>
+      <ion-button color="danger" @click="clearGameScores" slot="end">
+      <ion-icon :icon="trashBinOutline" slot="end"></ion-icon>
+      Clear Scores
+    </ion-button>
     </ion-item>
   </ion-list>
   <h3 v-show="!gameScores.length">No scores yet!</h3>
@@ -29,11 +33,12 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonSelect, IonSelectOption } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonButton } from '@ionic/vue';
+import { trashBinOutline } from 'ionicons/icons';
 import { inject, computed, ref } from 'vue'
 import { GameScoresProvider } from '@/types';
 
-const { gameScores } = inject<GameScoresProvider>('gameScores')!;
+const { gameScores, clearGameScores } = inject<GameScoresProvider>('gameScores')!;
 const sort = ref("latest");
 
 const sortedScores = computed(() => {
@@ -64,5 +69,8 @@ ion-content {
   align-items: center;
   text-align: center;
   margin: 0;
+}
+ion-button {
+  margin-top: 1rem;
 }
 </style>

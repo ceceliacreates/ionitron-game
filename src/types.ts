@@ -7,5 +7,6 @@ export type GameScore = {
   export interface GameScoresProvider {
       gameScores: GameScore[];
       addGameScore: (score: number, rating: string) => void;
+      clearGameScores: () => void;
   
     }
