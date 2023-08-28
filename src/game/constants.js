@@ -57,11 +57,11 @@ const gameConstants = {
       bug1Path: "assets/bug1.png",
       bug1Key: "bug1",
       bug1Size: 50,
-      bug1Scale: 1,
+      bug1Scale: 1.25,
       bug2Path: "assets/bug2.png",
       bug2Key: "bug2",
       bug2Size: 50,
-      bug2Scale: 1,
+      bug2Scale: 1.25,
     },
     arrow: {
       size: 80,

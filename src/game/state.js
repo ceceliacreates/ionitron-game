@@ -5,7 +5,9 @@ export const gameState = {
   moveRight: false,
   moveUp: false,
   canPause: true,
-  lastStarX: null,
+  immune: false,
+  lastRewardX: null,
+  lastBugX: null,
   screen: {
     width: null,
     height: null,

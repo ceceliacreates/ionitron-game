@@ -9,14 +9,20 @@ export class PlayScene extends Scene {
     }
 
     preload() {
-        this.load.image(gameConstants.background.key, gameConstants.background.path);
-        this.load.image(gameConstants.star.key, gameConstants.star.path);
-        this.load.image(gameConstants.bomb.key1, gameConstants.bomb.path1);
-        this.load.image(gameConstants.bomb.key2, gameConstants.bomb.path2);
-        this.load.spritesheet(gameConstants.player.key, gameConstants.player.path, {
-          frameWidth: gameConstants.player.width,
-          frameHeight: gameConstants.player.height,
-        });
+      this.load.image(gameConstants.background.key, gameConstants.background.path);
+      this.load.image(gameConstants.rewards.starKey, gameConstants.rewards.starPath);
+      this.load.image(gameConstants.rewards.heartKey, gameConstants.rewards.heartPath);
+      this.load.image(gameConstants.penalties.angryKey, gameConstants.penalties.angryPath);
+      this.load.image(gameConstants.penalties.sadKey, gameConstants.penalties.sadPath);
+      this.load.image(gameConstants.boosts.coffeeKey, gameConstants.boosts.coffeePath);
+      this.load.image(gameConstants.boosts.laptopKey, gameConstants.boosts.laptopPath);
+      this.load.image(gameConstants.boosts.phoneKey, gameConstants.boosts.phonePath);
+      this.load.image(gameConstants.bugs.bug1Key, gameConstants.bugs.bug1Path);
+      this.load.image(gameConstants.bugs.bug2Key, gameConstants.bugs.bug2Path);
+      this.load.spritesheet(gameConstants.player.key, gameConstants.player.path, {
+        frameWidth: gameConstants.player.width,
+        frameHeight: gameConstants.player.height,
+      });
         this.load.image(gameConstants.platform.key, gameConstants.platform.path);
         this.load.image(gameConstants.arrow.leftKey, gameConstants.arrow.leftPath);
         this.load.image(gameConstants.arrow.rightKey, gameConstants.arrow.rightPath);
@@ -51,11 +57,12 @@ export class PlayScene extends Scene {
     };
 
     // calculates physics values based on screen size
-    const starFallTime = timeToFall(gameState.gameArea.height, gameConstants.star.gravity);
-    const maxPotentialDistanceToCatchStar = maxPotentialDistanceToCatch(starFallTime, gameConstants.player.velocity);
+    const rewardFallTime = timeToFall(gameState.gameArea.height, gameConstants.rewards.gravity);
+    const maxPotentialDistanceToCatchReward = maxPotentialDistanceToCatch(rewardFallTime, gameConstants.player.velocity);
 
-    // sets initial lastStarX value of the middle of the screen
-    gameState.lastStarX = gameState.gameArea.width / 2;
+    // sets initial lastRewardX as the middle of the screen
+    gameState.lastRewardX = gameState.gameArea.width / 2;
+
 
     // resets gameOver to false to handle game restarts
     gameState.gameOver = false;
@@ -132,48 +139,132 @@ export class PlayScene extends Scene {
 
    // ADDS GENERATED GAME ELEMENTS
 
-   // creates stars group, adds generator function, and starts generator loop
-   const stars = this.physics.add.group({
-    gravityY: gameConstants.star.gravity
+   // creates rewards group, adds generator function, and starts generator loop
+   const rewards = this.physics.add.group({
+    gravityY: gameConstants.rewards.gravity
   });
   
-   const createStar = () => {
-    const playerMinBoundary = gameState.lastStarX - maxPotentialDistanceToCatchStar < gameState.gameArea.leftEdge ? gameState.gameArea.leftEdge : gameState.lastStarX - maxPotentialDistanceToCatchStar;
-    const playerMaxBoundary = gameState.lastStarX + maxPotentialDistanceToCatchStar > gameState.gameArea.rightEdge ? gameState.gameArea.rightEdge : gameState.lastStarX + maxPotentialDistanceToCatchStar;
+   const createReward = () => {
+    const rewardMinBoundary = gameState.lastRewardX - maxPotentialDistanceToCatchReward < gameState.gameArea.leftEdge ? gameState.gameArea.leftEdge : gameState.lastRewardX - maxPotentialDistanceToCatchReward;
+    const rewardMaxBoundary = gameState.lastRewardX + maxPotentialDistanceToCatchReward > gameState.gameArea.rightEdge ? gameState.gameArea.rightEdge : gameState.lastRewardX + maxPotentialDistanceToCatchReward;
     const randomXCoord = Math.random() * gameState.gameArea.width;
-    const xCoord = Phaser.Math.Clamp(randomXCoord, playerMinBoundary, playerMaxBoundary);
-    const star = stars.create(xCoord, 0, gameConstants.star.key)
-    gameState.lastStarX = star.x;
+    const xCoord = Phaser.Math.Clamp(randomXCoord, rewardMinBoundary, rewardMaxBoundary);
+    const randomRewardKey = Math.random() > 0.5 ? gameConstants.rewards.starKey : gameConstants.rewards.heartKey;
+    const rewardScale = randomRewardKey === gameConstants.rewards.starKey ? gameConstants.rewards.starScale : gameConstants.rewards.heartScale;
+    const reward = rewards.create(xCoord, 0, randomRewardKey).setScale(rewardScale);
+    gameState.lastRewardX = reward.x;
 }
 
-   const createStarLoop = this.time.addEvent({
-    delay: 1000,
-    callback: createStar,
+   const createRewardLoop = this.time.addEvent({
+    // generates a random number of MS between 1000 and 1200
+    delay: Math.floor(Math.random() * (1200 - 1000 + 1)) + 1000,
+    callback: createReward,
     callbackScope: this,
     loop: true,
 });
 
-// creates bombs group, adds generator function, and starts generator loop
-   const bombs = this.physics.add.group({
-      gravityY: gameConstants.bomb.gravity
+// creates penalties group, adds generator function, and starts generator loop
+    const penalties = this.physics.add.group({
+        gravityY: gameConstants.penalties.gravity
+      });
+    
+    const createPenalty = () => {
+      // creates buffer to ensure that the penalty will drop at least 10% of the game width away from the last reward dropped
+      const penaltyBuffer = gameState.gameArea.width * 0.1;
+
+      // if last reward was dropped on the left side of the screen, the minimum boundary is the last reward x-coordinate plus the buffer
+      // otherwise, the minimum boundary is the left edge of the game area
+      const penaltyMinBoundary = gameState.lastRewardX < gameState.gameArea.width / 2 ? gameState.lastRewardX + penaltyBuffer : gameState.gameArea.leftEdge;
+
+      // if last reward was dropped on the right side of the screen, the maximum boundary is the last reward x-coordinate minus the buffer
+      // otherwise, the maximum boundary is the right edge of the game area
+      const penaltyMaxBoundary = gameState.lastRewardX > gameState.gameArea.width / 2 ? gameState.lastRewardX - penaltyBuffer : gameState.gameArea.rightEdge;
+
+      // creates penalty at random x-coordinate within the buffer
+      const randomXCoord = Math.random() * gameState.gameArea.width;
+      const xCoord = Phaser.Math.Clamp(randomXCoord, penaltyMinBoundary, penaltyMaxBoundary);
+
+      // creates random penalty type
+      const randomPenaltyKey = Math.random() > 0.5 ? gameConstants.penalties.angryKey : gameConstants.penalties.sadKey;
+      const penaltyScale = randomPenaltyKey === gameConstants.penalties.angryKey ? gameConstants.penalties.angryScale : gameConstants.penalties.sadScale;
+      const penalty = penalties.create(xCoord, 0, randomPenaltyKey).setScale(penaltyScale);
+    }
+
+    const createPenaltyLoop = this.time.addEvent({
+      // generates a random number of MS between 1800 and 2000
+      delay: Math.floor(Math.random() * (2000 - 1800 + 1)) + 1800,
+      callback: createPenalty,
+      callbackScope: this,
+      loop: true,
     });
 
-  const createBomb = () => {
-    const bombBuffer = gameState.gameArea.width * 0.1;
-    const bombMinBoundary = gameState.player.x - bombBuffer < gameState.gameArea.leftEdge ? gameState.gameArea.leftEdge : gameState.player.x - bombBuffer;
-    const bombMaxBoundary = gameState.player.x + bombBuffer > gameState.gameArea.rightEdge ? gameState.gameArea.rightEdge : gameState.player.x + bombBuffer;
-    const randomXCoord = Math.random() * gameState.gameArea.width;
-    const xCoord = Phaser.Math.Clamp(randomXCoord, bombMinBoundary, bombMaxBoundary);
-    const bomb = bombs.create(xCoord, 0, gameConstants.bomb.key)
 
-    // sets hit area for bomb to be smaller than actual bomb
-    const hitRadius = bomb.width * 0.6 / 2; 
-    bomb.setCircle(hitRadius, bomb.width * 0.2, bomb.height * 0.2); // the offset values should be half of the difference between the hit area and the actual bomb
+// creates bugs group, adds generator function, and starts generator loop
+   const bugs = this.physics.add.group({
+      gravityY: gameConstants.bugs.gravity
+    });
+
+  const createBug = () => {
+    // creates buffer to ensure that the bug will drop within 10% of the game width away from the player to make it challenging
+    const bugBuffer = gameState.gameArea.width * 0.1;
+    const bugMinBoundary = gameState.player.x - bugBuffer < gameState.gameArea.leftEdge ? gameState.gameArea.leftEdge : gameState.player.x - bugBuffer;
+    const bugMaxBoundary = gameState.player.x + bugBuffer > gameState.gameArea.rightEdge ? gameState.gameArea.rightEdge : gameState.player.x + bugBuffer;
+
+    // creates bug at random x-coordinate within the buffer
+    const randomXCoord = Math.random() * gameState.gameArea.width;
+    const xCoord = Phaser.Math.Clamp(randomXCoord, bugMinBoundary, bugMaxBoundary);
+
+    // creates random bug type
+    const randomBugKey = Math.random() > 0.5 ? gameConstants.bugs.bug1Key : gameConstants.bugs.bug2Key;
+    const bugScale = randomBugKey === gameConstants.bugs.bug1Key ? gameConstants.bugs.bug1Scale : gameConstants.bugs.bug2Scale;
+    const bug = bugs.create(xCoord, 0, randomBugKey).setScale(bugScale);
+
+    // sets hit area for bug to be smaller than actual bug
+    const hitRadius = bug.width * 0.6 / 2; 
+    bug.setCircle(hitRadius, bug.width * 0.2, bug.height * 0.2); // the offset values should be half of the difference between the hit area and the actual bug
+
+    gameState.lastBugX = bug.x;
   }
 
-  const createBombLoop = this.time.addEvent({
+  const createBugLoop = this.time.addEvent({
     delay: 5000,
-    callback: createBomb,
+    callback: createBug,
+    callbackScope: this,
+    loop: true,
+  });
+
+  // creates boosts group, adds generator function, and starts generator loop
+  const boosts = this.physics.add.group({
+    gravityY: gameConstants.boosts.gravity
+  });
+
+  const createBoost = () => {
+    // creates buffer to ensure that the boost will drop at least 10% of the game width away from the last bug dropped
+    const boostBuffer = gameState.gameArea.width * 0.1;
+
+    // if last bug was dropped on the left side of the screen, the minimum boundary is the last bug x-coordinate plus the buffer
+    // otherwise, the minimum boundary is the left edge of the game area
+    const boostMinBoundary = gameState.lastBugX < gameState.gameArea.width / 2 ? gameState.lastBugX + boostBuffer : gameState.gameArea.leftEdge;
+
+    // if last bug was dropped on the right side of the screen, the maximum boundary is the last bug x-coordinate minus the buffer
+    // otherwise, the maximum boundary is the right edge of the game area
+    const boostMaxBoundary = gameState.lastBugX > gameState.gameArea.width / 2 ? gameState.lastBugX - boostBuffer : gameState.gameArea.rightEdge;
+
+    // creates boost at random x-coordinate within the buffer
+    const randomXCoord = Math.random() * gameState.gameArea.width;
+    const xCoord = Phaser.Math.Clamp(randomXCoord, boostMinBoundary, boostMaxBoundary);
+
+    // creates random boost type
+    const randomBoostNumber = Math.random();
+    const randomBoostKey = randomBoostNumber > 0.5 ? gameConstants.boosts.coffeeKey : randomBoostNumber > 0.33 ? gameConstants.boosts.laptopKey : gameConstants.boosts.phoneKey;
+    const boostScale = randomBoostKey === gameConstants.boosts.coffeeKey ? gameConstants.boosts.coffeeScale : randomBoostKey === gameConstants.boosts.laptopKey ? gameConstants.boosts.laptopScale : gameConstants.boosts.phoneScale;
+    const boost = boosts.create(xCoord, 0, randomBoostKey).setScale(boostScale);
+  }
+
+  const createBoostLoop = this.time.addEvent({
+    // generates a random number of MS between 5000 and 10000
+    delay: Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000,
+    callback: createBoost,
     callbackScope: this,
     loop: true,
   });
@@ -242,26 +333,68 @@ export class PlayScene extends Scene {
   // adds collider between player and platforms
     this.physics.add.collider(gameState.player, platforms);
 
-  // adds colliders for stars
+  // adds colliders for rewards
 
-    this.physics.add.collider(stars, platforms, function(star) {
-        star.destroy();
+    this.physics.add.collider(rewards, platforms, function(reward) {
+        reward.destroy();
       });
 
-    this.physics.add.overlap(gameState.player, stars, function(player, star) {
-        star.destroy();
+    this.physics.add.overlap(gameState.player, rewards, function(player, reward) {
+        reward.destroy();
         gameState.score += 10;
         gameState.scoreText.setText(`Score: ${gameState.score}`);
         });
 
-  // adds colliders for bombs with platform
-    this.physics.add.collider(bombs, platforms, function(bomb) {
-        bomb.destroy();
+  // adds colliders for penalties
+
+      this.physics.add.collider(penalties, platforms, function(penalty) {
+        penalty.destroy();
+      });
+
+    this.physics.add.overlap(gameState.player, penalties, function(player, penalty) {
+        penalty.destroy();
+        // checks for immunity before updating score
+        if (!gameState.immunity) {
+        gameState.score = gameState.score > 10 ? gameState.score - 10 : 0;
+        gameState.scoreText.setText(`Score: ${gameState.score}`);
+        };
+        });
+  
+  // adds colliders for boosts
+
+    this.physics.add.collider(boosts, platforms, function(boost) {
+        boost.destroy();
+      });
+
+    this.physics.add.overlap(gameState.player, boosts, function(player, boost) {
+        boost.destroy();
+        gameState.immunity = true;
+        gameState.player.setTint(0x00ff00);
+
+        gameState.immunityTimer = this.time.addEvent({
+          delay: 5000,
+          callback: () => {
+            gameState.immunity = false;
+            gameState.player.clearTint();
+          },
+          callbackScope: this,
+          loop: false,
+        });
+        }, null, this);
+
+
+  // adds colliders for bugs with platform
+    this.physics.add.collider(bugs, platforms, function(bug) {
+        bug.destroy();
       }
     );
 
-  // adds collider for bombs with player
-    this.physics.add.overlap(gameState.player, bombs, function(player, bomb) {
+  // adds collider for bugs with player
+    this.physics.add.overlap(gameState.player, bugs, function(player, bug) {
+
+    // checks for immunity before ending game
+
+    if (!gameState.immunity) {
     
     // calculates app store rating based on score
 
@@ -276,15 +409,17 @@ export class PlayScene extends Scene {
 
     // stops game generators and physics
       gameState.gameOver = true;
-      createBombLoop.destroy();
-      createStarLoop.destroy();
+      createBugLoop.destroy();
+      createRewardLoop.destroy();
       this.physics.pause();
 
       // stops Play Scene and starts Score Scene
 
       this.scene.stop('PlayScene')
       this.scene.start('ScoreScene', { appStoreRating: appStoreRating });
-    }, null, this);
+    }
+  }, null, this);
+    
 }
   
     update () {
