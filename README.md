@@ -24,10 +24,7 @@
 
 ## Gameplay
 
-<img src="screenshots/screenshotstartscene.png" width="200">
-<img src="screenshots/screenshotgameplay.png" width="200">
-<img src="screenshots/screenshotscorescene.png" width="200">
-<img src="screenshots/screenshortscoreslist.png" width="200">
+<img src="screenshots/screenshotstartscene.png" width="200"> <img src="screenshots/screenshotgameplay.png" width="200"> <img src="screenshots/screenshotscorescene.png" width="200"> <img src="screenshots/screenshortscoreslist.png" width="200">
 
 In this game, you are Ionitron, a hard-working cross-platform developer! You use your web skills to build mobile apps for iOS and Android using Ionic and Capacitor.
 
